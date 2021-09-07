@@ -21,6 +21,9 @@ class AppCubit extends Cubit<AppStates>{
   }
   late Database database;
   List<Map>tasks = [];
+  List<Map>newTasks =[];
+  List<Map>doneTasks=[];
+  List<Map>archivedTasks=[];
   bool isBottomSheetShown = false;
   IconData fabIcon = Icons.edit;
   void createDatabase()  {
@@ -34,10 +37,7 @@ class AppCubit extends Cubit<AppStates>{
               .catchError((error) =>
               print('error when creating table ${error.toString()}'));
         }, onOpen: (database) {
-         getDataFromDatabase(database).then((value) {
-                tasks = value;
-                emit(AppGetDatabaseState());
-          });
+         getDataFromDatabase(database);
         }).then(
              (value) {
                database = value;
@@ -55,20 +55,52 @@ class AppCubit extends Cubit<AppStates>{
           'INSERT INTO tasks(title, date, time, status) VALUES("$title","$date","$time","new")')
           .then((value) {
             emit(AppInsertDatabaseState());
-            getDataFromDatabase(database).then((value)
-            {
-              tasks= value;
-              emit(AppGetDatabaseState());
-            });
+            getDataFromDatabase(database);
         print('$value inserted successfully');
       }).catchError((error) {
         print('Error when inserting new record ${error.toString()}');
       });
     });
   }
+  void deleteData({
+    required int id,
+  })async
+  {
+    database.rawDelete('DELETE FROM tasks WHERE id = ?',
+        [id]
+    ).then((value) {
+      getDataFromDatabase(database);
+      emit(AppDeleteDatabaseState());
 
-  Future<List<Map>> getDataFromDatabase(database) async {
-    return await database.rawQuery('SELECT * FROM tasks');
+    });
+  }
+  void updateData({
+  required String status,
+    required int id,
+})async
+  {
+     database.rawUpdate('Update tasks SET status = ? WHERE id = ?',
+        ['$status',id]
+    ).then((value) {
+      getDataFromDatabase(database);
+      emit(AppUpdateDatabaseState());
+
+    });
+  }
+  void getDataFromDatabase(database)  {
+    newTasks = [];
+    doneTasks = [];
+    archivedTasks = [];
+     database.rawQuery('SELECT * FROM tasks').then((value){
+       value.forEach((element){
+         if(element['status']=='new')
+           newTasks.add(element);
+         else if (element['status'] == 'done')
+           doneTasks.add(element);
+         else archivedTasks.add(element);
+       });
+     });
+     emit(AppGetDatabaseState());
   }
   void changeBottomSheetState({
     required bool isShow ,

@@ -12,8 +12,8 @@ class NewTaskScreen extends StatelessWidget{
     return BlocConsumer<AppCubit,AppStates>(
       listener: (context,state){},
       builder:(context,state) {
-    var tasks = AppCubit.get(context).tasks;
-    return ListView.separated(itemBuilder: (context ,index)=>buildTaskItem(tasks[index]), separatorBuilder: (context, index)=>Padding(
+    var tasks = AppCubit.get(context).newTasks;
+    return ListView.separated(itemBuilder: (context ,index)=>buildTaskItem(tasks[index],context), separatorBuilder: (context, index)=>Padding(
     padding: const EdgeInsetsDirectional.only(
     start: 20.0,
     ),
