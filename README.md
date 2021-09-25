@@ -6,7 +6,7 @@
 * [Setup](#setup)
 
 ## General info
-
+App used to save your daily tasks.
 	
 ## Technologies
 Project is created with:
