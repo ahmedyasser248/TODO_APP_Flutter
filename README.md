@@ -3,7 +3,7 @@
 ## Table of contents
 * [General info](#general-info)
 * [Technologies](#technologies)
-* [Screens](#setup)
+* [Screens](#screens)
 
 ## General info
 App used to save your daily tasks.
